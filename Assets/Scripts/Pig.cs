@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Collections.LowLevel.Unsafe;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -67,17 +65,6 @@ public class Pig : MonoBehaviour
         //onStoneDestroy.AddListener(RefreshStonesCount);
         hpBar.SetStartHealth(100);
     }
-
-
-    /*private void RefreshStonesCount()
-    {
-        stonesCount--;
-        if (stonesCount == 0)
-        {
-            SceneManager.LoadScene(0);
-        }
-    }*/
-
     void Start()
     {
         moveState = MoveState.Right;
@@ -171,6 +158,8 @@ public class Pig : MonoBehaviour
         }
         else
         {
+            SceneManager.LoadScene("LoseGame");
+            
             //Destoy or Invoke?
         }
     }

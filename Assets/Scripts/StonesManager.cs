@@ -28,7 +28,7 @@ public class StonesManager : MonoBehaviour
         stoneSlider.value = stoneSlider.maxValue - stonesCount;
         if (stonesCount == 0)
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene("WinGame");
         }
     }
     
