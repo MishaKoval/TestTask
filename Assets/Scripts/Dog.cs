@@ -60,12 +60,15 @@ public class Dog : MonoBehaviour
 
     private Animator anim;
 
+    private AudioSource audioSource;
+
     #endregion
 
     #region MonoBehaviour
 
     private void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         anim = GetComponent<Animator>();
         startpos = transform.position;
         dir = startTarget - startpos;
@@ -73,6 +76,7 @@ public class Dog : MonoBehaviour
         dogType = Mathf.Abs(dir.z) > 0 ? DogType.Vertical : DogType.Horizontal;
         dogSpriteType = DogSpriteType.Default;
         onBombed.AddListener(() => StartCoroutine(WaitBombAnim()));
+        onBombed.AddListener(()=> audioSource.Play());
     }
 
     void Start()

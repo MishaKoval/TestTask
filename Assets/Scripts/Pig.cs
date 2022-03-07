@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class Pig : MonoBehaviour
 {
@@ -29,6 +32,8 @@ public class Pig : MonoBehaviour
 
     [SerializeField] public UnityEvent onDamaged;
 
+    //[SerializeField] public UnityEvent onStoneDestroy;
+    
     #endregion
 
     #region Fields
@@ -39,7 +44,13 @@ public class Pig : MonoBehaviour
 
     private Animator anim;
 
+    private AudioSource audioSource;
+
+    private Vector3 newForwardVector;
+
     private int HP = 100;
+
+    
 
     #endregion
 
@@ -47,10 +58,25 @@ public class Pig : MonoBehaviour
 
     private void Awake()
     {
+        //stonesCount = Stones.transform.childCount;
+        //Debug.Log($"Камней: {stonesCount}");
+        newForwardVector = (corners[0].position - corners[3].position).normalized;
         anim = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
         onDamaged.AddListener(() => StartCoroutine(WaitDamageAnim()));
+        //onStoneDestroy.AddListener(RefreshStonesCount);
         hpBar.SetStartHealth(100);
     }
+
+
+    /*private void RefreshStonesCount()
+    {
+        stonesCount--;
+        if (stonesCount == 0)
+        {
+            SceneManager.LoadScene(0);
+        }
+    }*/
 
     void Start()
     {
@@ -79,7 +105,20 @@ public class Pig : MonoBehaviour
             }
             else
             {
-                moveState = inputZ >= 0 ? MoveState.Up : MoveState.Down;
+                if (inputZ >= 0)
+                {
+                    
+                    moveState = MoveState.Up;
+                    movement += newForwardVector;
+                }
+                else
+                {
+                    moveState = MoveState.Down;
+                    movement -= newForwardVector;
+                }
+
+                
+                
                 /*if (rb.velocity.z >= 0)
                 {
                     moveState = MoveState.Up;

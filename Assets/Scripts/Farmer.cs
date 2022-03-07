@@ -39,6 +39,8 @@ public class Farmer : MonoBehaviour
 
     private Rigidbody rb;
 
+    private AudioSource audioSource;
+
     private Vector3 movement;
 
     private MoveState moveState;
@@ -51,9 +53,11 @@ public class Farmer : MonoBehaviour
 
     private void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         onBombed.AddListener(() => StartCoroutine(WaitBombAnim()));
+        onBombed.AddListener(()=> audioSource.Play());
     }
 
     void Start()

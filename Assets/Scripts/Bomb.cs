@@ -15,11 +15,17 @@ public class Bomb : MonoBehaviour
 
     [SerializeField] private float yOffset = 1.0f;
 
+    [SerializeField] private StonesManager stonesManager;
+
     #endregion
 
     #region Fields
 
     private Animator anim;
+
+    private AudioSource audioSource;
+
+    //[SerializeField]private AudioManager audioManager;
 
     #endregion
 
@@ -27,7 +33,10 @@ public class Bomb : MonoBehaviour
 
     private void Awake()
     {
+        stonesManager = GameObject.Find("Stones").GetComponent<StonesManager>();
+        Debug.Log(stonesManager);
         anim = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -51,9 +60,24 @@ public class Bomb : MonoBehaviour
     }
 
     #endregion
-    
+
+    /*private IEnumerator WaitSound()
+    {
+        //audioSource.Play();
+        
+        //gameObject.SetActive(false);
+        gameObject.GetComponent<SphereCollider>().enabled = false;
+        //yield return new WaitWhile(()=>audioSource.isPlaying);
+        Destroy(gameObject);
+        yield return null;
+    }*/
+
     private void Fire()
     {
+        //StartCoroutine(WaitSound());
+        //audioManager.onSoundPlay.AddListener(()=>audioManager.PlaySound(audioSource.clip));
+        //audioManager.onSoundPlay?.Invoke();
+        AudioSource.PlayClipAtPoint(audioSource.clip,transform.position);
         Instantiate(bombEffect, transform.position, Quaternion.identity);
         var colliders = Physics.OverlapSphere(transform.position, damageRadius);
         foreach (var coll in colliders)
@@ -63,6 +87,8 @@ public class Bomb : MonoBehaviour
                 var position = coll.transform.position;
                 Vector3 pos = new Vector3(position.x, position.y + yOffset, position.z);
                 Instantiate(stoneEffect, pos, Quaternion.identity);
+                AudioSource.PlayClipAtPoint(audioSource.clip,coll.transform.position);
+                stonesManager.onStoneDestroy.Invoke();
                 Destroy(coll.gameObject);
             }
 
