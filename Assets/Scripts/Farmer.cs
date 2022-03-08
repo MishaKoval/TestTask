@@ -25,11 +25,13 @@ public class Farmer : MonoBehaviour
 
     [SerializeField] private float speed = 2.0f;
 
-    [SerializeField] public UnityEvent onBombed;
+    [SerializeField] private float searchYOffset = 2.0f;
 
+    [SerializeField] private float dirChangeTime = 3.0f;
+    
     [SerializeField] private float waitBombTime = 1.5f;
-
-    //[SerializeField] private float changeDirTime = 5.0f;
+    
+    [SerializeField] public UnityEvent onBombed;
     
     #endregion
 
@@ -46,7 +48,7 @@ public class Farmer : MonoBehaviour
     private MoveState moveState;
 
     private FarmerState farmerState;
-
+    
     #endregion
 
     #region MonoBehaviour
@@ -67,8 +69,6 @@ public class Farmer : MonoBehaviour
         movement = transform.right * -1;
         StartCoroutine(ChangeDirection());
         StartCoroutine(FindPig());
-        //InvokeRepeating(nameof(ChangeDirection),changeDirTime,changeDirTime);
-        //InvokeRepeating(nameof(CheckDirection),0,0.1f);
     }
 
 
@@ -87,19 +87,6 @@ public class Farmer : MonoBehaviour
         if (CheckBorders())
         {
             movement *= -1;
-            /*if (moveState == Pig.MoveState.Left || moveState == Pig.MoveState.Right)
-            {
-                movement = transform.forward;
-                moveState = Pig.MoveState.Up;
-                //movement *= -1;
-            }
-            else
-            {
-                movement = transform.right;
-                moveState = Pig.MoveState.Right;
-                //movement *= -1f;
-            }
-        }*/
         }
     }
 
@@ -139,7 +126,7 @@ public class Farmer : MonoBehaviour
     {
         while (gameObject)
         {
-            yield return new WaitForSeconds(5.0f);
+            yield return new WaitForSeconds(dirChangeTime);
             var rand = Random.Range(0, 3);
             switch (rand)
             {
@@ -169,13 +156,11 @@ public class Farmer : MonoBehaviour
             if (rb.velocity.x > 0)
             {
                 spriteId = (int) MoveState.Right;
-                //spriteRenderer.sprite = sprites[];
                 moveState = MoveState.Right;
             }
             else
             {
                 spriteId = (int) MoveState.Left;
-                //spriteRenderer.sprite = sprites[];
                 moveState = MoveState.Left;
             }
         }
@@ -184,13 +169,11 @@ public class Farmer : MonoBehaviour
             if (rb.velocity.z > 0)
             {
                 spriteId = (int) MoveState.Up;
-                //spriteRenderer.sprite = sprites[];
                 moveState = MoveState.Up;
             }
             else
             {
                 spriteId = (int) MoveState.Down;
-                //spriteRenderer.sprite = sprites[];
                 moveState = MoveState.Down;
             }
         }
@@ -208,29 +191,6 @@ public class Farmer : MonoBehaviour
                 break;
         }
     }
-
-    /*private void ChangeDirection()
-    {
-        while (gameObject)
-        {
-            var rand = Random.Range(0, 3);
-            switch (rand)
-            {
-                case 0:
-                    movement = Vector3.right.normalized;
-                    break;
-                case 1:
-                    movement = Vector3.left.normalized;
-                    break;
-                case 2:
-                    movement = Vector3.forward.normalized;
-                    break;
-                case 3:
-                    movement = Vector3.back.normalized;
-                    break;
-            }
-        }
-    }*/
 
     private bool CheckBorders()
     {
@@ -289,7 +249,7 @@ public class Farmer : MonoBehaviour
         }
 
         var position = transform.position;
-        position.y += 0.2f;
+        position.y += searchYOffset;
         Ray ray = new Ray(position, dir);
         Debug.DrawRay(position, dir);
         //Debug.Break();

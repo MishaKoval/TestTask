@@ -19,7 +19,7 @@ public class StonesManager : MonoBehaviour
         stoneSlider.wholeNumbers = true;
         stoneSlider.value = stoneSlider.maxValue - stonesCount;
         onStoneDestroy.AddListener(RefreshStonesCount);
-        Debug.Log($"Камней: {stonesCount}");
+        Debug.Log($"Stones: {stonesCount}");
     }
     
     private void RefreshStonesCount()
@@ -31,17 +31,4 @@ public class StonesManager : MonoBehaviour
             SceneManager.LoadScene("WinGame");
         }
     }
-    
-
-    // Start is called before the first frame update
-    /*void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }*/
 }

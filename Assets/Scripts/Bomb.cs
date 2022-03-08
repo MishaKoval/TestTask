@@ -8,12 +8,12 @@ public class Bomb : MonoBehaviour
     [SerializeField] private float damageRadius = 1.0f;
 
     [SerializeField] private float waitTime = 3.0f;
+    
+    [SerializeField] private float yOffset = 1.0f;
 
     [SerializeField] private GameObject stoneEffect;
 
     [SerializeField] private GameObject bombEffect;
-
-    [SerializeField] private float yOffset = 1.0f;
 
     [SerializeField] private StonesManager stonesManager;
 
@@ -24,8 +24,7 @@ public class Bomb : MonoBehaviour
     private Animator anim;
 
     private AudioSource audioSource;
-
-    //[SerializeField]private AudioManager audioManager;
+    
 
     #endregion
 
@@ -60,18 +59,7 @@ public class Bomb : MonoBehaviour
     }
 
     #endregion
-
-    /*private IEnumerator WaitSound()
-    {
-        //audioSource.Play();
-        
-        //gameObject.SetActive(false);
-        gameObject.GetComponent<SphereCollider>().enabled = false;
-        //yield return new WaitWhile(()=>audioSource.isPlaying);
-        Destroy(gameObject);
-        yield return null;
-    }*/
-
+    
     private void Fire()
     {
         //StartCoroutine(WaitSound());

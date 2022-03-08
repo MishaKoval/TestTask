@@ -8,13 +8,13 @@ public class Pig : MonoBehaviour
 {
     #region Inspector
 
-    [SerializeField] private Joystick joystick;
-
     [SerializeField] private float speed = 2.0f;
 
     [SerializeField] private float bombOffset = 2.0f;
 
-    [SerializeField] private float waitBombTime = 2.0f;
+    [SerializeField] private float waitBombAnimTime = 2.0f;
+    
+    [SerializeField] private Joystick joystick;
 
     [SerializeField] private List<Sprite> moveSprites;
 
@@ -30,8 +30,6 @@ public class Pig : MonoBehaviour
 
     [SerializeField] public UnityEvent onDamaged;
 
-    //[SerializeField] public UnityEvent onStoneDestroy;
-    
     #endregion
 
     #region Fields
@@ -42,32 +40,30 @@ public class Pig : MonoBehaviour
 
     private Animator anim;
 
-    private AudioSource audioSource;
+    //private AudioSource audioSource;
 
-    private Vector3 newForwardVector;
+    private Vector3 forwardVectorOffset;
 
     private int HP = 100;
 
+    private bool isBombReload;
     
-
     #endregion
 
     #region MonoBehaviour
 
     private void Awake()
     {
-        //stonesCount = Stones.transform.childCount;
-        //Debug.Log($"Камней: {stonesCount}");
-        newForwardVector = (corners[0].position - corners[3].position).normalized;
+        forwardVectorOffset = (corners[0].position - corners[3].position).normalized;
         anim = GetComponent<Animator>();
-        audioSource = GetComponent<AudioSource>();
+        //audioSource = GetComponent<AudioSource>();
         onDamaged.AddListener(() => StartCoroutine(WaitDamageAnim()));
-        //onStoneDestroy.AddListener(RefreshStonesCount);
         hpBar.SetStartHealth(100);
     }
     void Start()
     {
         moveState = MoveState.Right;
+        isBombReload = false;
     }
 
     void Update()
@@ -81,14 +77,6 @@ public class Pig : MonoBehaviour
             if (Mathf.Abs(inputX) >= Mathf.Abs(inputZ))
             {
                 moveState = inputX >= 0 ? MoveState.Right : MoveState.Left;
-                /*if (rb.velocity.x >= 0)
-                {
-                    moveState = MoveState.Right;
-                }
-                else
-                {
-                    moveState = MoveState.Left;
-                }*/
             }
             else
             {
@@ -96,24 +84,13 @@ public class Pig : MonoBehaviour
                 {
                     
                     moveState = MoveState.Up;
-                    movement += newForwardVector;
+                    movement += forwardVectorOffset;
                 }
                 else
                 {
                     moveState = MoveState.Down;
-                    movement -= newForwardVector;
+                    movement -= forwardVectorOffset;
                 }
-
-                
-                
-                /*if (rb.velocity.z >= 0)
-                {
-                    moveState = MoveState.Up;
-                }
-                else
-                {
-                    moveState = MoveState.Down;
-                }*/
             }
         }
 
@@ -130,7 +107,7 @@ public class Pig : MonoBehaviour
         if (collision.gameObject.CompareTag("Farmer"))
         {
             onDamaged.Invoke();
-            rb.AddForce(collision.rigidbody.velocity *1000);
+            rb.AddForce(collision.rigidbody.velocity * 1000);
         }
     }
 
@@ -141,13 +118,18 @@ public class Pig : MonoBehaviour
     private IEnumerator WaitDamageAnim()
     {
         anim.SetBool("IsDamaged", true);
-        yield return new WaitForSeconds(waitBombTime);
+        yield return new WaitForSeconds(waitBombAnimTime);
         anim.SetBool("IsDamaged", false);
     }
 
+    private IEnumerator WaitBombReload()
+    {
+        yield return new WaitForSeconds(3.0f);
+        isBombReload = false;
+    }
+
     #endregion
-
-
+    
     public void GetDamage(int damage)
     {
         var hp = HP - damage;
@@ -166,6 +148,9 @@ public class Pig : MonoBehaviour
 
     public void PlantBomb()
     {
+        if (isBombReload) return;
+        isBombReload = true;
+        StartCoroutine(WaitBombReload());
         Vector3 bombPos = transform.position;
         switch (moveState)
         {
@@ -188,5 +173,7 @@ public class Pig : MonoBehaviour
         {
             Instantiate(bombPrefab, bombPos, Quaternion.Euler(new Vector3(45, 0, 0)));
         }
+
+
     }
 }

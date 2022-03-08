@@ -20,14 +20,12 @@ public class Dog : MonoBehaviour
 
     #region Inspector
 
-    [SerializeField] private Vector3 startTarget;
-
-    [SerializeField] private Rigidbody rb;
-
     [SerializeField] private float speed = 1.5f;
 
-    [SerializeField] private float angrySpeed = 2.2f;
-
+    [SerializeField] private float angrySpeed = 2.5f;
+    
+    [SerializeField] private float waitBombTime = 1.0f;
+    
     [SerializeField] private SpriteRenderer spriteRenderer;
 
     [SerializeField] private List<Sprite> moveSprites;
@@ -35,10 +33,13 @@ public class Dog : MonoBehaviour
     [SerializeField] private List<Sprite> angrySprites;
 
     [SerializeField] private List<Sprite> dirtySprites;
+    
+    [SerializeField] private Vector3 startTarget;
 
+    [SerializeField] private Rigidbody rb;
+    
     [SerializeField] public UnityEvent onBombed;
-
-    [SerializeField] private float waitBombTime = 1.0f;
+    
 
     #endregion
 
@@ -85,6 +86,11 @@ public class Dog : MonoBehaviour
         startState = moveState;
         InvokeRepeating("CheckTargetPos", 0, 0.1f);
     }
+    
+    private void Update()
+    {
+        CheckDirection();
+    }
 
     private void FixedUpdate()
     {
@@ -99,10 +105,7 @@ public class Dog : MonoBehaviour
         }
     }
     
-    private void Update()
-    {
-        CheckDirection();
-    }
+    
 
     #endregion
 
@@ -112,7 +115,6 @@ public class Dog : MonoBehaviour
     {
         if (dogSpriteType == DogSpriteType.Dirty)
         {
-            //Debug.Break();
             StartCoroutine(WaitDestroy());
         }
 
